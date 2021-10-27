@@ -4,6 +4,8 @@ from pygame import mixer
 import pickle
 from os import path
 
+import database
+
 pygame.mixer.pre_init(44100, -16, 2, 512)
 mixer.init()
 pygame.init()
@@ -20,18 +22,26 @@ pygame.display.set_caption('Platformer')
 # define font
 font = pygame.font.SysFont('Bauhaus 93', 70)
 font_score = pygame.font.SysFont('Bauhaus 93', 30)
+font_scoreboard_big = pygame.font.SysFont('Bauhaus 93', 50)
+font_scoreboard_small = pygame.font.SysFont('Bauhaus 93', 40)
 
 # define game variables
 tile_size = 50
 game_over = 0
 main_menu = True
-level = 3
+scoreboard = False
+users = []
+scoreboard_y_pos = 45
+level = 0
 max_levels = 7
 score = 0
 
 # define colors
+red = (255, 0, 0)
+black = (0, 0, 0)
 white = (255, 255, 255)
 blue = (0, 0, 255)
+green = (0, 255, 0)
 
 # load images
 sun_img = pygame.image.load('img/sun.png')
@@ -403,7 +413,9 @@ world = World(world_data)
 # create buttons
 restart_button = Button(screen_width // 2 - 50, screen_height // 2 + 100, restart_img)
 start_button = Button(screen_width // 2 - 350, screen_height // 2, start_img)
-exit_button = Button(screen_width // 2 + 250, screen_height // 2, exit_img)
+exit_button = Button(screen_width // 2 + 200, screen_height // 2, exit_img)
+scoreboard_button = Button(screen_width // 2 - 350, screen_height // 2 + 250, start_img)
+exit_scoreboard_button = Button(screen_width // 2 + 200, screen_height // 2 + 300, exit_img)
 
 run = True
 while run:
@@ -417,6 +429,27 @@ while run:
             run = False
         if start_button.draw():
             main_menu = False
+        # draw scoreboard
+        if scoreboard_button.draw():
+            scoreboard = True
+            main_menu = False
+            users = database.get_scoreboard()
+    elif scoreboard:
+        if exit_scoreboard_button.draw():
+            main_menu = True
+            scoreboard = False
+        draw_text('USERNAME', font_scoreboard_big, black, 10, 0)
+        draw_text('COINS', font_scoreboard_big, black, 340, 0)
+        draw_text('TIME', font_scoreboard_big, black, 590, 0)
+        draw_text('DEATHS', font_scoreboard_big, black, 800, 0)
+        for user in users[:]:
+            scoreboard_y_pos += 45
+            draw_text(user.Username, font_scoreboard_small, red, 10, scoreboard_y_pos)
+            draw_text(str(user.Coins), font_scoreboard_small, red, 340, scoreboard_y_pos)
+            draw_text(str(user.Seconds), font_scoreboard_small, red, 590, scoreboard_y_pos)
+            draw_text(str(user.Deaths), font_scoreboard_small, red, 800, scoreboard_y_pos)
+
+        scoreboard_y_pos = 45
     else:
         world.draw()
 
