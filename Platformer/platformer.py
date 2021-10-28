@@ -6,6 +6,7 @@ from os import path
 import time
 
 import database
+import inputbox
 
 pygame.mixer.pre_init(44100, -16, 2, 512)
 mixer.init()
@@ -33,7 +34,7 @@ main_menu = True
 scoreboard = False
 users = []
 scoreboard_y_pos = 45
-level = 0
+level = 7
 max_levels = 7
 score = 0
 username = ""
@@ -432,6 +433,9 @@ while run:
         if exit_button.draw():
             run = False
         if start_button.draw():
+            inputbox.main()
+            username = inputbox.username
+            print(username)
             main_menu = False
             # start counting seconds
             start = time.time()
@@ -468,7 +472,9 @@ while run:
                 score += 1
                 coin_fx.play()
             draw_text(f'X {str(score)}', font_score, white, tile_size - 10, 10)
-            draw_text(f'Time: {str(round(time.time() - start, 2))}', font_score, white, tile_size + 100, 10)
+            draw_text(f'Deaths: {str(deaths)}', font_score, white, 125, 10)
+            draw_text(f'{username}', font_score, white, 400, 10)
+            draw_text(f'Time: {str(round(time.time() - start, 2))}', font_score, white, 800, 10)
 
         blob_group.draw(screen)
         lava_group.draw(screen)
@@ -502,10 +508,11 @@ while run:
                     seconds = str(round(time.time() - start, 2))
                     database.insert_user(username, score, seconds, deaths)
                 draw_text('YOU WIN!', font, blue, (screen_width // 2) - 140, screen_height // 2)
-                draw_text(f'Time: {seconds}', font_score, white, tile_size + 100, 10)
+                draw_text(f'Time: {seconds}', font_score, white, 800, 10)
                 # restart game
                 if restart_button.draw():
                     seconds = 0
+                    start = time.time()
                     level = 1
                     # reset level
                     world_data = []
