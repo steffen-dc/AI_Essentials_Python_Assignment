@@ -3,6 +3,7 @@ from pygame.locals import *
 from pygame import mixer
 import pickle
 from os import path
+import time
 
 import database
 
@@ -35,6 +36,9 @@ scoreboard_y_pos = 45
 level = 0
 max_levels = 7
 score = 0
+username = ""
+seconds = 0
+deaths = 0
 
 # define colors
 red = (255, 0, 0)
@@ -429,6 +433,8 @@ while run:
             run = False
         if start_button.draw():
             main_menu = False
+            # start counting seconds
+            start = time.time()
         # draw scoreboard
         if scoreboard_button.draw():
             scoreboard = True
@@ -462,6 +468,7 @@ while run:
                 score += 1
                 coin_fx.play()
             draw_text(f'X {str(score)}', font_score, white, tile_size - 10, 10)
+            draw_text(f'Time: {str(round(time.time() - start, 2))}', font_score, white, tile_size + 100, 10)
 
         blob_group.draw(screen)
         lava_group.draw(screen)
@@ -479,6 +486,7 @@ while run:
                 world = reset_level(level)
                 game_over = 0
                 score = 0
+                deaths += 1
 
         # if plyaer has completed the level
         if game_over == 1:
@@ -490,15 +498,21 @@ while run:
                 world = reset_level(level)
                 game_over = 0
             else:
+                if seconds == 0:
+                    seconds = str(round(time.time() - start, 2))
+                    database.insert_user(username, score, seconds, deaths)
                 draw_text('YOU WIN!', font, blue, (screen_width // 2) - 140, screen_height // 2)
+                draw_text(f'Time: {seconds}', font_score, white, tile_size + 100, 10)
                 # restart game
                 if restart_button.draw():
+                    seconds = 0
                     level = 1
                     # reset level
                     world_data = []
                     world = reset_level(level)
                     game_over = 0
                     score = 0
+
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
