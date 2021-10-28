@@ -34,7 +34,7 @@ main_menu = True
 scoreboard = False
 users = []
 scoreboard_y_pos = 45
-level = 7
+level = 0
 max_levels = 7
 score = 0
 username = ""
@@ -54,6 +54,7 @@ bg_img = pygame.image.load('img/sky.png')
 restart_img = pygame.image.load('img/restart_btn.png')
 start_img = pygame.image.load('img/start_btn.png')
 exit_img = pygame.image.load('img/exit_btn.png')
+leaderboard_img = pygame.image.load('img/leaderboard_btn.png')
 
 # load sounds
 pygame.mixer.music.load('img/music.wav')
@@ -233,7 +234,6 @@ class Player:
                     if platform.move_x != 0:
                         self.rect.x += platform.move_direction
 
-
             # update player coordinates
             self.rect.x += dx
             self.rect.y += dy
@@ -247,7 +247,7 @@ class Player:
         # draw player onto screen
         screen.blit(self.image, self.rect)
         # visualize player rectangle
-        #pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
+        # pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
 
         return game_over
 
@@ -326,7 +326,7 @@ class World:
             screen.blit(tile[0], tile[1])
 
             # visualize world rectangles
-            #pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
+            # pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -419,7 +419,7 @@ world = World(world_data)
 restart_button = Button(screen_width // 2 - 50, screen_height // 2 + 100, restart_img)
 start_button = Button(screen_width // 2 - 350, screen_height // 2, start_img)
 exit_button = Button(screen_width // 2 + 200, screen_height // 2, exit_img)
-scoreboard_button = Button(screen_width // 2 - 350, screen_height // 2 + 250, start_img)
+leaderboard_button = Button(screen_width // 2 - 200, screen_height // 2 + 50, leaderboard_img)
 exit_scoreboard_button = Button(screen_width // 2 + 200, screen_height // 2 + 300, exit_img)
 
 run = True
@@ -440,7 +440,7 @@ while run:
             # start counting seconds
             start = time.time()
         # draw scoreboard
-        if scoreboard_button.draw():
+        if leaderboard_button.draw():
             scoreboard = True
             main_menu = False
             users = database.get_scoreboard()
@@ -519,7 +519,6 @@ while run:
                     world = reset_level(level)
                     game_over = 0
                     score = 0
-
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

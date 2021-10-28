@@ -1,13 +1,14 @@
 # FROM https://stackoverflow.com/a/46390412
-
+import pygame
 import pygame as pg
 
 pg.init()
 screen = pg.display.set_mode((640, 480))
 COLOR_INACTIVE = pg.Color('lightskyblue3')
 COLOR_ACTIVE = pg.Color('dodgerblue2')
-FONT = pg.font.Font(None, 32)
+FONT = pg.font.Font(None, 40)
 username = ""
+
 
 class InputBox:
 
@@ -58,13 +59,17 @@ def set_username(value):
 
 def main():
     clock = pg.time.Clock()
-    box = InputBox(100, 100, 140, 32)
+    box = InputBox(380, 490, 140, 40)
+    screen.blit(pygame.image.load('img/sky.png'), (0, 0))
+    username_text = FONT.render("Username: ", True, COLOR_ACTIVE)
+    screen.blit(username_text, (150, 500))
     done = False
 
     while not done:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 done = True
+                pg.quit()
             box.handle_event(event)
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_RETURN:
@@ -72,7 +77,7 @@ def main():
 
         box.update()
 
-        screen.fill((30, 30, 30))
+        # screen.fill((30, 30, 30))
 
         box.draw(screen)
 
